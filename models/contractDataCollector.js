@@ -1,27 +1,15 @@
 const { getContractData, getContractCalls, getIfItsVerified } = require('../services/eth_requests')
+const ValidationError = require('./ValidationError')
 
-class ValidationError extends Error {
-  constructor(message) {
-    super(message)
-    this.name = "ValidationError";
-  }
-}
-
-module.exports = class DataCollector {
+module.exports = class ContractDataCollector {
   constructor(body) {
-    const needed = ["from", "to", "value", "gas", "maxFeePerGas", "maxPriorityFeePerGas", "data"]
+    const needed = ["address"]
     needed.forEach(property => {
       if (!body.hasOwnProperty(property))
-        throw new ValidationError(`Invalid transaction input for property ${property}`)
+        throw new ValidationError(`Invalid contract input for property ${property}`)
     })
 
-    this.from = body.from
-    this.contractAddr = body.to
-    this.value = body.value
-    this.gas = body.gas
-    this.maxFeePerGas = body.maxFeePerGas
-    this.maxPriorityFeePerGas = body.maxPriorityFeePerGas
-    this.data = body.data
+    this.address = body.address
   }
 
   async populateData() {
@@ -44,13 +32,7 @@ module.exports = class DataCollector {
 
   toJSON() {
     return {
-      from: this.from,
-      contractAddr: this.contractAddr,
-      value: this.value,
-      gas: this.gas,
-      maxFeePerGas: this.maxFeePerGas,
-      maxPriorityFeePerGas: this.maxPriorityFeePerGas,
-      data: this.data,
+      address: this.address,
       contractCreator: this.contractCreator,
       creationTimestamp: this.creationTimestamp,
       lastActiveTimestamp: this.lastActiveTimestamp,

@@ -1,12 +1,12 @@
 const txRouter = require('express').Router()
 const logger = require('../utils/logger')
-const DataCollector = require('../models/dataCollector')
+const TxDataCollector = require('../models/txDataCollector')
 const { analyzeTx } = require('../services/analyzer')
 
 const { simulateTx } = require('../services/simulate')
 
 txRouter.post('/', async (request, response) => {
-  const dataTx = new DataCollector(request.body)
+  const dataTx = new TxDataCollector(request.body)
 
   await dataTx.populateData()
 
