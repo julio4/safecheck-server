@@ -1,6 +1,5 @@
 const axios = require('axios')
 const { TENDERLY_SIMULATE_URL, TENDERLY_ACCESS_KEY } = require('../utils/config')
-const fs = require('fs')
 
 const simulateTx = async (tx) => {
   const opts = {
@@ -24,18 +23,53 @@ const simulateTx = async (tx) => {
     "simulation_type": "full"
   }
 
-  var response
+  let simulationResult
+  let status
   try {
-    //response = await axios.post(TENDERLY_SIMULATE_URL, body, opts);
-    let content = fs.readFileSync("./ethorc.json", "utf8");
-    console.log(content)
-    response.data = JSON.parse(content);
+    let response = await axios.post(TENDERLY_SIMULATE_URL, body, opts);
+    simulationResult = response.data
+    status = 1
   } catch (error) {
-    console.log("An error occured " + error.message)
-    process.exit(0)
+    simulationResult = error.response.data
+    status = 0
   }
 
-  return response.data
+  return {
+    status: status,
+    data: status ? extractSimulationData(simulationResult) : simulationResult
+  }
+}
+
+function extractSimulationData(simulation) {
+  let result = {}
+
+  let transaction = simulation.transaction
+  let balanceDiff = transaction.transaction_info.balance_diff
+  let contracts = simulation.contracts
+  let stacktrace = transaction.transaction_info.stack_trace
+  let error = {}
+  // If an error occured, it is stored in the stacktrace in the first element
+  if (stacktrace != null) {
+    if (stacktrace[0].error != null) { // Error occured
+      error["error"] = stacktrace[0].error
+      error["error_reason"] = stacktrace[0].error_reason
+      error["contract"] = stacktrace[0].contract
+      error["code"] = stacktrace[0].code
+      error["line"] = stacktrace[0].line
+      error["contract_name"] = stacktrace[0].name
+      error["op"] = stacktrace[0].op
+    }
+  }
+
+  result["balance_diff"] = []
+  balanceDiff.forEach(diff => {
+    if (diff.address == transaction.from) result.balance_diff.push(diff)
+  });
+  result["standards"] = contracts[0].standards
+  result["token_data"] = contracts[0].token_data
+  result["error"] = error
+
+  return result
 }
 
 module.exports = {

@@ -13,20 +13,16 @@ txRouter.get('/', async (request, response) => {
 txRouter.post('/', async (request, response) => {
   const dataTx = new DataCollector(request.body)
 
-  //await dataTx.populateData()
+  await dataTx.populateData()
 
   // validate transaction
-  // TODO
-  // logger.info("Received tx:")
-  // logger.info(dataTx.toJSON())
 
   // simulate tx
   const simulation = await simulateTx(request.body)
-  console.log(JSON.stringify(simulation))
-  // await simulateTx(body)
 
   logger.info("Analyzed tx:")
   logger.info(dataTx.toJSON())
+  logger.info(JSON.stringify(simulation))
 
   response
     .status(200)
