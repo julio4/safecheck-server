@@ -26,7 +26,6 @@ module.exports = class DataCollector {
             }
         })
         promise.then((result) => {
-            // console.log("Promise resolving in getContractCreator")
             if (result.data.status === "1") {
                 this.ContractCreator = result.data.result[0].contractCreator
                 this.ContractCreationTxHash = result.data.result[0].txHash
@@ -39,10 +38,7 @@ module.exports = class DataCollector {
     // WEB3 JS x INFURA
     async getCreationDate(promise) {
         return new Promise((resolve, reject) => {
-            // console.log("Awaiting for the promise to resolve in getCreationDate")
             promise.then(async () => {
-                // console.log("Promise resolving in getCreationDate")
-                // console.log("ContractCreationTxHash: " + this.ContractCreationTxHash)
                 // Get the tx data (and the block hash)
                 var creationTxData = await web3.eth.getTransaction(this.ContractCreationTxHash)
                 // Get the block timestamp
@@ -98,8 +94,22 @@ module.exports = class DataCollector {
             }
         })
         promise.then((result) => {
-            console.log("Handle tx data here")
-            // Handle tx data somewhere else
+            this.ContractCall30Days = result.data.result.length
+        })
+        return promise
+    }
+
+    async getIfItsVerified() {
+        var promise = axios.get(ETHERSCAN_API_KEY, {
+            params: {
+                module: 'contract',
+                action: 'getsourcecode',
+                address: this.ContractAddr,
+                apikey: process.env.ETHERSCAN_API_KEY
+            }
+        })
+        promise.then((result) => {
+            this.IsAVerifiedContract = result.data.result[0].ABI === "Contract source code not verified" ? false : true;
         })
         return promise
     }
@@ -108,13 +118,9 @@ module.exports = class DataCollector {
         var contractCreatorPromise = this.getContractCreator()
         var creationDatePromise = this.getCreationDate(contractCreatorPromise)
         var txDataPromise = this.getTxData()
+        var getIfItsVerifiedPromise = this.getIfItsVerified()
 
-        await creationDatePromise.then((result) => {
-            //console.log("Creation date promise resolved")
-        })
-        await txDataPromise.then((result) => {
-            // Handle tx data somewhere elese
-        })
+        await Promise.all([contractCreatorPromise, creationDatePromise, txDataPromise, getIfItsVerifiedPromise])
     }
 
     toJSON() {
@@ -129,7 +135,8 @@ module.exports = class DataCollector {
             ContractCreator: this.ContractCreator,
             ContractCreationTxHash: this.ContractCreationTxHash,
             CreationTimestamp: this.CreationTimestamp,
-            ContractCallAllTime: this.ContractCallAllTime
+            ContractCall30Days: this.ContractCall30Days,
+            IsAVerifiedContract: this.IsAVerifiedContract
         }
     }
 }
