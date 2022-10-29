@@ -8,13 +8,15 @@ const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 
 const txRouter = require('./controllers/transactions')
+const contractRouter = require('./controllers/contracts')
 
 app.use(cors())
 app.use(express.static('build'))
 app.use(express.json())
 app.use(middleware.requestLogger)
 
-app.use('/api/v1', txRouter)
+app.use('/api/v1/tx', txRouter)
+app.use('/api/v1/contract', contractRouter)
 
 if (process.env.NODE_ENV === 'test') {
   const testingRouter = require('./controllers/testing')

@@ -10,7 +10,7 @@
 const analyzeTx = ({ 
   value,
   creationTimestamp,
-  contractCall30Days,
+  callsCount,
   isAVerifiedContract
 }) => {
   insights = {score: undefined}
@@ -25,7 +25,7 @@ const analyzeTx = ({
   let native_value = Number(value)
   if (native_value > 0) {
     score--
-    insights.value = `[Warning] Value not null! Transfer ${native_value * 10**(-18)}`
+    insights.value = `[Warning] Value not null! Transfer ${native_value * 10**(-18)} eth`
   }
 
   let creationTime = new Date(creationTimestamp * 1000)
@@ -36,13 +36,13 @@ const analyzeTx = ({
     insights.date += "\n[WARNING] Deployed less than a month ago."
   }
 
-  if (contractCall30Days > 999) {
-    insights.calls = ">1K calls in the last month. This contract is used a lot!"
-  } else if (contractCall30Days < 50) {
+  if (callsCount > 7000) {
+    insights.calls = ">7K calls. This contract is used a lot!"
+  } else if (callsCount < 50) {
     score--
-    insights.calls = `[WARNING] There were only ${contractCall30Days} calls to this contract in the last month. This contract is not used a lot.`
+    insights.calls = `[WARNING] There were only ${callsCount} calls to this contract. This contract is not used a lot.`
   } else {
-    insights.calls = `There were ${contractCall30Days} calls to this contract in the last month.`
+    insights.calls = `There were ${callsCount} calls to this contract.`
   }
 
   insights.score = `[${score}/${totalChecks}]`

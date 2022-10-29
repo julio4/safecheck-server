@@ -1,69 +1,48 @@
 const axios = require('axios')
-const Web3 = require('web3')
 
-const { ETHERSCAN_API_ENDPOINT, ETHERSCAN_API_KEY, INFURA_PROVIDER } = require("../utils/config")
+const { ETHERSCAN_API_KEY, ETHERSCAN_API_ENDPOINT, TRANSPOSE_API_ENDPOINT, TRANSPOSE_API_KEY } = require("../utils/config")
 
-// ETHERSCAN API
-const getContractCreationData = async (contractAddr) => {
-  const response = await axios.get(ETHERSCAN_API_ENDPOINT, {
-    params: {
-      module: 'contract',
-      action: 'getcontractcreation',
-      contractaddresses: contractAddr,
-      apikey: ETHERSCAN_API_KEY
-    }
-  })
-
-  if (response.data.status === "1") {
-    let contractCreationHash = response.data.result[0].txHash
-    const creationDate = await getContractCreationDate(contractCreationHash)
-
-    return {
-      status: creationDate.status,
-      contractCreator: response.data.result[0].contractCreator,
-      contractCreationHash,
-      creationTimestamp: creationDate.creationTimestamp
-    }
+class RequestError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = "RequestError";
   }
-  return { status: 0 }
 }
 
-// WEB3 JS x INFURA
-const getContractCreationDate = async (contractCreationHash) => {
+const getContractData = async (contractAddr) => {
+  let response = undefined 
   try {
-    const web3 = new Web3(new Web3.providers.HttpProvider(INFURA_PROVIDER))
-    let creationTxData = await web3.eth.getTransaction(contractCreationHash)
-    let blockData = await web3.eth.getBlock(creationTxData.blockHash)
-    return {
-      status: 1,
-      creationTimestamp: blockData.timestamp
-    }
-  } catch(e) {
-    return { status: 0 }
+    response = await axios.post(TRANSPOSE_API_ENDPOINT, {
+      sql: `SELECT * FROM ethereum.accounts WHERE address='${contractAddr}';`
+    }, {
+      headers: {
+        'x-api-key': TRANSPOSE_API_KEY,
+        'content-type': 'application/json'
+      }
+    })
+  } catch (e) {
+    throw new RequestError("Transpose API")
   }
+
+  return response.data.results
 }
 
-// ETHERSCAN API
 const getContractCalls = async (contractAddr) => {
-  const web3 = new Web3(new Web3.providers.HttpProvider(INFURA_PROVIDER))
-  const latest = await web3.eth.getBlockNumber()
-  const averageBlockForOneMonth = parseInt(60 * 60 * 24 * 30 / 12)
+  let response = undefined 
+  try {
+    response = await axios.post(TRANSPOSE_API_ENDPOINT, {
+      sql: `SELECT * FROM ethereum.transactions WHERE to_address='${contractAddr}';`
+    }, {
+      headers: {
+        'x-api-key': TRANSPOSE_API_KEY,
+        'content-type': 'application/json'
+      }
+    })
+  } catch (e) {
+    throw new RequestError("Transpose API")
+  }
 
-  const response = await axios.get(ETHERSCAN_API_ENDPOINT, {
-    params: {
-      module: 'logs',
-      action: 'getLogs',
-      fromBlock: latest - averageBlockForOneMonth,
-      toBlock: latest,
-      page: "1",
-      offset: "1000",
-      address: contractAddr,
-      apikey: ETHERSCAN_API_KEY
-    }
-  })
-
-  // todo handle response
-  return response.data
+  return response.data.results
 }
 
 const getIfItsVerified = async (contractAddr) => {
@@ -79,7 +58,7 @@ const getIfItsVerified = async (contractAddr) => {
 }
 
 module.exports = {
-  getContractCreationData,
+  getContractData,
   getContractCalls,
   getIfItsVerified
 }

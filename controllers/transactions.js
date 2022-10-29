@@ -5,12 +5,6 @@ const { analyzeTx } = require('../services/analyzer')
 
 const { simulateTx } = require('../services/simulate')
 
-txRouter.get('/', async (request, response) => {
-  response
-    .status(200)
-    .json(dataTx.toJSON())
-})
-
 txRouter.post('/', async (request, response) => {
   const dataTx = new DataCollector(request.body)
 

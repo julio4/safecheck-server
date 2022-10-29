@@ -1,4 +1,4 @@
-const { getContractCreationData, getContractCalls, getIfItsVerified } = require('../services/eth_requests')
+const { getContractData, getContractCalls, getIfItsVerified } = require('../services/eth_requests')
 
 class ValidationError extends Error {
   constructor(message) {
@@ -15,28 +15,28 @@ module.exports = class DataCollector {
         throw new ValidationError(`Invalid transaction input for property ${property}`)
     })
 
-    this.From = body.from
-    this.ContractAddr = body.to
-    this.Value = body.value
-    this.Gas = body.gas
-    this.MaxFeePerGas = body.maxFeePerGas
-    this.MaxPriorityFeePerGas = body.maxPriorityFeePerGas
-    this.Data = body.data
+    this.from = body.from
+    this.contractAddr = body.to
+    this.value = body.value
+    this.gas = body.gas
+    this.maxFeePerGas = body.maxFeePerGas
+    this.maxPriorityFeePerGas = body.maxPriorityFeePerGas
+    this.data = body.data
   }
 
   async populateData() {
-    const p1 = getContractCreationData(this.ContractAddr).then(data => {
-      this.ContractCreator = data.contractCreator
-      this.ContractCreationTxHash = data.contractCreationHash
-      this.CreationTimestamp = data.creationTimestamp
+    const p1 = getContractData(this.contractAddr).then(data => {
+      this.contractCreator = data.contractCreator
+      this.creationTimestamp = data.created_timestamp
+      this.lastActiveTimestamp = data.last_active_timestamp
     })
 
-    const p2 = getContractCalls(this.ContractAddr).then(data => {
-      this.ContractCall30Days = data.result.length
+    const p2 = getContractCalls(this.contractAddr).then(data => {
+      this.callsCount = data.length
     })
 
     const p3 = getIfItsVerified(this.ContractAddr).then(data => {
-      this.IsAVerifiedContract = data
+      this.isAVerifiedContract = data
     })
 
     return Promise.all([p1, p2, p3])
@@ -44,18 +44,18 @@ module.exports = class DataCollector {
 
   toJSON() {
     return {
-      from: this.From,
-      contractAddr: this.ContractAddr,
-      value: this.Value,
-      gas: this.Gas,
-      maxFeePerGas: this.MaxFeePerGas,
-      maxPriorityFeePerGas: this.MaxPriorityFeePerGas,
-      data: this.Data,
-      contractCreator: this.ContractCreator,
-      contractCreationTxHash: this.ContractCreationTxHash,
-      creationTimestamp: this.CreationTimestamp,
-      contractCall30Days: this.ContractCall30Days,
-      isAVerifiedContract: this.IsAVerifiedContract
+      from: this.from,
+      contractAddr: this.contractAddr,
+      value: this.value,
+      gas: this.gas,
+      maxFeePerGas: this.maxFeePerGas,
+      maxPriorityFeePerGas: this.maxPriorityFeePerGas,
+      data: this.data,
+      contractCreator: this.contractCreator,
+      creationTimestamp: this.creationTimestamp,
+      lastActiveTimestamp: this.lastActiveTimestamp,
+      isAVerifiedContract: this.isAVerifiedContract,
+      callsCount: this.callsCount
     }
   }
 }
