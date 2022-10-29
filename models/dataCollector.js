@@ -44,23 +44,18 @@ module.exports = class DataCollector {
 
   toJSON() {
     return {
-      From: this.From,
-      ContractAddr: this.ContractAddr,
-      Value: this.Value,
-      Gas: this.Gas,
-      MaxFeePerGas: this.MaxFeePerGas,
-      MaxPriorityFeePerGas: this.MaxPriorityFeePerGas,
-      Data: this.Data,
-      ContractCreator: this.ContractCreator,
-      ContractCreationTxHash: this.ContractCreationTxHash,
-      CreationTimestamp: this.CreationTimestamp,
-      ContractCall30Days: this.ContractCall30Days,
-      IsAVerifiedContract: this.IsAVerifiedContract
+      from: this.From,
+      contractAddr: this.ContractAddr,
+      value: this.Value,
+      gas: this.Gas,
+      maxFeePerGas: this.MaxFeePerGas,
+      maxPriorityFeePerGas: this.MaxPriorityFeePerGas,
+      data: this.Data,
+      contractCreator: this.ContractCreator,
+      contractCreationTxHash: this.ContractCreationTxHash,
+      creationTimestamp: this.CreationTimestamp,
+      contractCall30Days: this.ContractCall30Days,
+      isAVerifiedContract: this.IsAVerifiedContract
     }
   }
-
-  toInsightsJSON() {
-    return this.toJSON()
-  }
-
 }
