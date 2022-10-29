@@ -1,4 +1,4 @@
-const { getContractCreationData, getContractCalls } = require('../services/eth_requests')
+const { getContractCreationData, getContractCalls, getIfItsVerified } = require('../services/eth_requests')
 
 class ValidationError extends Error {
   constructor(message) {
@@ -32,10 +32,14 @@ module.exports = class DataCollector {
     })
 
     const p2 = getContractCalls(this.ContractAddr).then(data => {
-      this.ContractCallAllTime = data.result.length
+      this.ContractCall30Days = data.result.length
     })
 
-    return Promise.all([p1, p2])
+    const p3 = getIfItsVerified(this.ContractAddr).then(data => {
+      this.IsAVerifiedContract = data
+    })
+
+    return Promise.all([p1, p2, p3])
   }
 
   toJSON() {
@@ -50,11 +54,13 @@ module.exports = class DataCollector {
       ContractCreator: this.ContractCreator,
       ContractCreationTxHash: this.ContractCreationTxHash,
       CreationTimestamp: this.CreationTimestamp,
-      ContractCallAllTime: this.ContractCallAllTime
+      ContractCall30Days: this.ContractCall30Days,
+      IsAVerifiedContract: this.IsAVerifiedContract
     }
   }
 
   toInsightsJSON() {
     return this.toJSON()
   }
+
 }

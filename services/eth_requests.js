@@ -66,7 +66,20 @@ const getContractCalls = async (contractAddr) => {
   return response.data
 }
 
+const getIfItsVerified = async (contractAddr) => {
+  const response = await axios.get(ETHERSCAN_API_ENDPOINT, {
+    params: {
+      module: 'contract',
+      action: 'getsourcecode',
+      address: contractAddr,
+      apikey: process.env.ETHERSCAN_API_KEY
+    }
+  })
+  return response.data.result[0].ABI === "Contract source code not verified" ? false : true;
+}
+
 module.exports = {
   getContractCreationData,
-  getContractCalls
+  getContractCalls,
+  getIfItsVerified
 }
