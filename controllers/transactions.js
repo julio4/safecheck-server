@@ -1,6 +1,7 @@
 const txRouter = require('express').Router()
 const logger = require('../utils/logger')
 const DataCollector = require('../models/dataCollector')
+const { analyzeTx } = require('../services/analyzer')
 
 const { simulateTx } = require('../services/simulate')
 
@@ -26,7 +27,7 @@ txRouter.post('/', async (request, response) => {
 
   response
     .status(200)
-    .json(dataTx.toInsightsJSON())
+    .json(analyzeTx(dataTx.toJSON()))
 })
 
 module.exports = txRouter
