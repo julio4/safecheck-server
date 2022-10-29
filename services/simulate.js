@@ -1,5 +1,4 @@
 const axios = require('axios')
-const logger = require('../utils/logger')
 const { TENDERLY_SIMULATE_URL, TENDERLY_ACCESS_KEY } = require('../utils/config')
 
 const simulateTx = async (tx) => {
@@ -25,7 +24,10 @@ const simulateTx = async (tx) => {
   }
 
   const response = await axios.post(TENDERLY_SIMULATE_URL, body, opts);
-  return response.data()
+
+  const data = response.data()
+
+  return data
 }
 
 module.exports = {

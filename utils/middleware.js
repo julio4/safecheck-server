@@ -1,5 +1,4 @@
 const logger = require('./logger')
-const Transaction = require('../models/transaction')
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)

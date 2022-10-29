@@ -1,5 +1,4 @@
 const txRouter = require('express').Router()
-const Transaction = require('../models/transaction')
 const logger = require('../utils/logger')
 const DataCollector = require('../models/dataCollector')
 
@@ -14,20 +13,18 @@ txRouter.get('/', async (request, response) => {
 txRouter.post('/', async (request, response) => {
   const dataTx = new DataCollector(request.body)
 
+  // get some data
   await dataTx.populateData()
 
-  // validate transaction
-  // TODO
-  logger.info("Received tx:")
-  logger.info(dataTx.toJSON())
-
   // simulate tx
-  
   // await simulateTx(body)
+
+  logger.info("Analyzed tx:")
+  logger.info(dataTx.toJSON())
 
   response
     .status(200)
-    .json(dataTx.toJSON())
+    .json(dataTx.toInsightsJSON())
 })
 
 module.exports = txRouter
