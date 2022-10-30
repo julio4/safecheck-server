@@ -3,6 +3,7 @@ const app = require('./app')
 const http = require('http')
 const config = require('./utils/config')
 const logger = require('./utils/logger')
+const fs = require('fs')
 
 const server = http.createServer(app)
 
@@ -33,5 +34,9 @@ process.on('uncaughtException', unexpectedErrorHandler);
 process.on('unhandledRejection', unexpectedErrorHandler);
 
 server.listen(config.PORT, () => {
+  if (!fs.existsSync('./computed')) {
+    fs.mkdirSync('./computed');
+    fs.writeFileSync('./computed/contracts.json');
+  }
   logger.info(`Server running on port ${config.PORT}`)
 })

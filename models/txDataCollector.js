@@ -1,4 +1,4 @@
-const ValidationError = require('./ValidationError')
+const ValidationError = require('./validationError')
 const ContractDataCollector = require('./contractDataCollector')
 
 module.exports = class TxDataCollector {
