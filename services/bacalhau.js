@@ -38,8 +38,8 @@ const callBacalhau = async (address, cid) => {
   fs.writeFileSync('./computed/contracts.json', JSON.stringify(contracts));
 }
 
-const localBac = async (content) => {
-  let result = { contractAdress: reSearch[0], addressCallCount: {}, oldestTimeStamp: 0, newestTimeStamp: 0, timePlot: [], transactionOverTime: [], valueOverTime: [] };
+const localBac = async (address, content) => {
+  let result = { contractAdress: address, addressCallCount: {}, oldestTimeStamp: 0, newestTimeStamp: 0, timePlot: [], transactionOverTime: [], valueOverTime: [] };
 
   try {
       if (content.length === 0) {

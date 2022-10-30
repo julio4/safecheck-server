@@ -43,7 +43,6 @@ const getContractCalls = async (contractAddr) => {
   } catch (e) {
     throw new RequestError("Transpose API")
   }
-  console.log(response.data.results);
   return response.data.results
 }
 

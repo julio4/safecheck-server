@@ -8,27 +8,10 @@ const { getContractInfo, callBacalhau, localBac } = require('../services/bacalha
 
 contractRouter.get('/:hash', async (request, response) => {
   const contractHash = request.params.hash
-  const addressRe = /^0x[a-fA-F0-9]{40}$/;
-  // if (!addressRe.test(contractHash)) {
-  //   response
-  //     .status(400)
-  //     .json({
-  //       "error": "Address in url is incorrect"
-  //     });
-  //   return;
-  // }
-
-  // const contractInfo = await getContractInfo(contractHash);
-
-  //if (contractInfo === null) {
-    const calls = await getContractCalls(contractHash);
-    // const cid = await addToIPFS(calls, contractHash)
-    // console.log(`Added tx list to IPFS ${cid}. Launching bacalhau job.`);
-    // callBacalhau(contractHash, cid);
-    const data = await localBac(calls);
-    response.status(404).json(localBac);
-    return;
-  //}
+  const calls = await getContractCalls(contractHash);
+  const data = await localBac(contractHash, calls);
+  response.json({bacalhau: localBac});
+  return;
 
   const contractInfo = await getContractInfo(contractHash);
   const contractCollector = new ContractDataCollector(contractHash)
