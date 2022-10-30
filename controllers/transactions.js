@@ -3,6 +3,7 @@ const logger = require('../utils/logger')
 const ContractDataCollector = require('../models/contractDataCollector')
 const { analyzeTx } = require('../services/analyzer')
 const TxDataCollector = require('../models/txDataCollector')
+const { simulateTx } = require('../services/simulate')
 
 
 txRouter.post('/', async (request, response) => {
@@ -22,7 +23,7 @@ txRouter.post('/', async (request, response) => {
   response
     .status(200)
     .json({
-      simulation: simulation,
+      simulation: simulation.data,
       dataTx: dataTx,
     })
 })
