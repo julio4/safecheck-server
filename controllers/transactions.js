@@ -18,12 +18,13 @@ txRouter.post('/', async (request, response) => {
     await dataTx.populateData()
     dataTx = dataTx.toJSON()
     simulation = await simulateTx(request.body)
+    simulation = simulation.data
   }
 
   response
     .status(200)
     .json({
-      simulation: simulation.data,
+      simulation: simulation,
       dataTx: dataTx,
     })
 })
