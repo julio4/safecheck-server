@@ -14,8 +14,8 @@ method: `POST`
 | --------------------- |:-------------:| ---------:|
 | from                  | address       |     *     |
 | to                    | address       |     *     |
-| value                 | wei           |     *     |
-| data                  | hex calldata  |     *     |
+| value                 | wei           |           |
+| data                  | hex calldata  |           |
 | gas                   | gas           |           |
 | maxFeePerGas          | gas           |           |
 | maxPriorityFeePerGas  | gas           |           |
