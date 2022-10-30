@@ -5,15 +5,13 @@ const { analyzeTx } = require('../services/analyzer')
 const TxDataCollector = require('../models/txDataCollector')
 const { simulateTx } = require('../services/simulate')
 
-
 txRouter.post('/', async (request, response) => {
   let dataTx
   let simulation
   if (process.env.MODE === 'static') {
     dataTx = require('../json/txData.json')
     simulation = require('../json/simulation.json')
-  }
-  else{
+  } else {
     dataTx = new TxDataCollector(request.body)
     await dataTx.populateData()
     dataTx = dataTx.toJSON()
@@ -26,6 +24,15 @@ txRouter.post('/', async (request, response) => {
       simulation: simulation.data,
       dataTx: dataTx,
     })
+})
+
+txRouter.post('/wallet', async (request, response) => {
+  const dataCollector = new TxDataCollector(request.body)
+  await dataCollector.populateData()
+
+  response
+    .status(200)
+    .json(analyzeTx(dataCollector.toJSON()))
 })
 
 module.exports = txRouter

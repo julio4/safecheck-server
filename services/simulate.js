@@ -33,7 +33,6 @@ const simulateTx = async (tx) => {
     simulationResult = error.response.data
     status = 0
   }
-  console.log(JSON.stringify(simulationResult))
 
   return {
     status: status,
