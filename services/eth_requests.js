@@ -33,7 +33,7 @@ const getContractCalls = async (contractAddr) => {
   let response = undefined 
   try {
     response = await axios.post(TRANSPOSE_API_ENDPOINT, {
-      sql: `SELECT timestamp, block_number, from_address, value, __confirmed FROM ethereum.transactions WHERE to_address='${contractAddr}' LIMIT 100;`
+      sql: `SELECT timestamp, block_number, from_address, value, __confirmed FROM ethereum.transactions WHERE to_address='${contractAddr}';`
     }, {
       headers: {
         'x-api-key': TRANSPOSE_API_KEY,
