@@ -7,19 +7,8 @@ const addToIPFS = async (data, filename) => {
   const file = new File([JSON.stringify(data)], `${filename}.json`, { type: 'application/json' })
 
   const cid = await client.put([file], {
-    wrapWithDirectory: false
+    wrapWithDirectory: true
   })
-
-  const res = await client.get(cid)
-  if (!res.ok) {
-    throw new Error(`failed to get ${cid} - [${res.status}] ${res.statusText}`)
-  }
-
-  // unpack File objects from the response
-  const files = await res.files()
-  for (const file of files) {
-    console.log(`${file.cid} -- ${file.path} -- ${file.size}`)
-  }
 
   return cid
 }
@@ -30,15 +19,21 @@ const getFromIPFS = async (cid) => {
   try {
     if (!fs.existsSync(outputsPath)) {
       const client = new Web3Storage({ token: WEB3STORAGE_API_KEY });
-
       const content = await client.get(cid)
 
       if (!content.ok) {
         console.error("IPFS client failed to get CID");
+        return null;
+      }
+
+      const files = await content.files();
+      for (const file of files) {
+        console.log("FILES");
+        console.log(`${file.cid} -- ${file.path} -- ${file.size}`);
       }
     }
   } catch (err) {
-    console.error("Could not find cached CID", err);
+    console.error("Could not add IPFS result to cache", err);
     return null
   }
 
@@ -51,23 +46,9 @@ const getFromIPFS = async (cid) => {
     console.error("Could not find cached CID", err);
     return null
   }
-
-
-
-  const res = await client.get(cid)
-  if (!res.ok) {
-    throw new Error(`failed to get ${cid} - [${res.status}] ${res.statusText}`)
-  }
-
-  // unpack File objects from the response
-  const files = await res.files()
-  for (const file of files) {
-    console.log(`${file.cid} -- ${file.path} -- ${file.size}`)
-  }
-
-  return cid
 }
 
 module.exports = {
-  addToIPFS
+  addToIPFS,
+  getFromIPFS
 }

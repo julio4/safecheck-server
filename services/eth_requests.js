@@ -33,7 +33,7 @@ const getContractCalls = async (contractAddr) => {
   let response = undefined 
   try {
     response = await axios.post(TRANSPOSE_API_ENDPOINT, {
-      sql: `SELECT timestamp, block_number, from_address, value, __confirmed FROM ethereum.transactions WHERE to_address='${contractAddr}';`
+      sql: `SELECT timestamp, block_number, from_address, value, __confirmed FROM ethereum.transactions WHERE to_address='${contractAddr}' LIMIT 100;`
     }, {
       headers: {
         'x-api-key': TRANSPOSE_API_KEY,
@@ -43,6 +43,7 @@ const getContractCalls = async (contractAddr) => {
   } catch (e) {
     throw new RequestError("Transpose API")
   }
+  console.log(response.data.results);
   return response.data.results
 }
 
@@ -51,7 +52,7 @@ const getContractCallsCount = async (contractAddr) => {
   let response = undefined 
   try {
     response = await axios.post(TRANSPOSE_API_ENDPOINT, {
-      sql: `SELECT timestamp, block_number, from_address, value, __confirmed FROM ethereum.transactions WHERE to_address='${contractAddr}'LIMIT 1000;`
+      sql: `SELECT timestamp, block_number, from_address, value, __confirmed FROM ethereum.transactions WHERE to_address='${contractAddr}' LIMIT 1000;`
     }, {
       headers: {
         'x-api-key': TRANSPOSE_API_KEY,

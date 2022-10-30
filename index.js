@@ -34,9 +34,10 @@ process.on('uncaughtException', unexpectedErrorHandler);
 process.on('unhandledRejection', unexpectedErrorHandler);
 
 server.listen(config.PORT, () => {
-  if (!fs.existsSync('./computed')) {
+  if (!fs.existsSync('./computed/'))
     fs.mkdirSync('./computed');
-    fs.writeFileSync('./computed/contracts.json');
-  }
+  if (!fs.existsSync('./computed/contracts.json'))
+    fs.writeFileSync('./computed/contracts.json', JSON.stringify({}));
+
   logger.info(`Server running on port ${config.PORT}`)
 })
