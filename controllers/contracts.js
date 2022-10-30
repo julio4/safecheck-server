@@ -19,9 +19,6 @@ contractRouter.get('/:hash', async (request, response) => {
   }
 
   const contractInfo = await getContractInfo(contractHash);
-
-  if (contractInfo !== null)
-
   const contractCollector = new ContractDataCollector(contractHash)
 
   await contractCollector.populateData()
