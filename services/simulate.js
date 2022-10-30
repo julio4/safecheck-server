@@ -33,6 +33,7 @@ const simulateTx = async (tx) => {
     simulationResult = error.response.data
     status = 0
   }
+  console.log(JSON.stringify(simulationResult))
 
   return {
     status: status,
@@ -61,13 +62,19 @@ function extractSimulationData(simulation) {
     }
   }
 
-  result["balance_diff"] = []
+  result["balance_diff"] = { original: "-1", dirty: "-1" }
   balanceDiff.forEach(diff => {
-    if (diff.address == transaction.from) result.balance_diff.push(diff)
+    if (diff.address.toLowerCase() === transaction.from.toLowerCase()) result["balance_diff"] = diff
   });
-  result["standards"] = contracts[0].standards
-  result["token_data"] = contracts[0].token_data
   result["error"] = error
+  if (contracts[0] != undefined) {
+    result["standards"] = contracts[0].standards
+    result["token_data"] = contracts[0].token_data
+  }
+  else {
+    result["standards"] = []
+    result["token_data"] = {}
+  }
 
   return result
 }

@@ -9,12 +9,18 @@ txRouter.post('/', async (request, response) => {
 
   await dataTx.populateData()
 
-  logger.info("Analyzed tx:")
-  logger.info(dataTx.toJSON())
+  // simulate tx
+  const simulation = await simulateTx(request.body)
+
+  // logger.info("Analyzed tx:")
+  // logger.info(dataTx.toJSON())
 
   response
     .status(200)
-    .json(analyzeTx(dataTx.toJSON()))
+    .json({
+      simulation: simulation,
+      dataTx: dataTx.toJSON(),
+    })
 })
 
 module.exports = txRouter
