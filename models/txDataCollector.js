@@ -3,7 +3,7 @@ const ContractDataCollector = require('./contractDataCollector')
 
 module.exports = class TxDataCollector {
   constructor(body) {
-    const needed = ["from", "to", "value", "gas", "maxFeePerGas", "maxPriorityFeePerGas", "data"]
+    const needed = ["from", "to"]
     needed.forEach(property => {
       if (!body.hasOwnProperty(property))
         throw new ValidationError(`Invalid transaction input for property ${property}`)
