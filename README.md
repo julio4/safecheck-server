@@ -73,5 +73,5 @@ Return:
 | isAVerifiedContract | Boolean telling if the contract code is verified                        |
 | callsCount          | Number of transaction calls to the contract (Descending order, max 10K) |
 
-# Frontend link
+# Front-end repository
 [SafeCheck Monorepo](https://github.com/julio4/safecheck-monorepo)
