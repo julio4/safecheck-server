@@ -41,6 +41,8 @@ const callBacalhau = async (address, cid) => {
 const localBac = async (address, content) => {
   let result = { contractAdress: address, addressCallCount: {}, oldestTimeStamp: 0, newestTimeStamp: 0, timePlot: [], transactionOverTime: [], valueOverTime: [] };
 
+  content.reverse()
+
   try {
       if (content.length === 0) {
           return result;
