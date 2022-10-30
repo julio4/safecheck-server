@@ -2,6 +2,8 @@
 
 Express.js app to provide insights about transactions data and smart contracts on ethereum.
 
+See https://github.com/julio4/safecheck-monorepo and https://github.com/julio4/bacalhau-ethereum-contracts
+
 ---
 
 ## Endpoint
