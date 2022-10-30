@@ -1,12 +1,3 @@
-//From: this.From,
-//ContractAddr: this.ContractAddr,
-//Gas: this.Gas,
-//MaxFeePerGas: this.MaxFeePerGas,
-//MaxPriorityFeePerGas: this.MaxPriorityFeePerGas,
-//Data: this.Data,
-//ContractCreator: this.ContractCreator,
-//ContractCreationTxHash: this.ContractCreationTxHash,
-
 const analyzeTx = ({ 
   value,
   creationTimestamp,
@@ -28,7 +19,7 @@ const analyzeTx = ({
     insights.value = `[Warning] Value not null! Transfer ${native_value * 10**(-18)} eth`
   }
 
-  let creationTime = new Date(creationTimestamp * 1000)
+  let creationTime = new Date(creationTimestamp)
   let elapsedDays = ((new Date()).getTime() - creationTime.getTime()) / (1000*60*60*24)
   insights.date = `Contract was deployed on ${creationTime.toString()}.` 
   if (elapsedDays < 30) {
@@ -36,9 +27,9 @@ const analyzeTx = ({
     insights.date += "\n[WARNING] Deployed less than a month ago."
   }
 
-  if (callsCount > 7000) {
-    insights.calls = ">7K calls. This contract is used a lot!"
-  } else if (callsCount < 50) {
+  if (callsCount > 999) {
+    insights.calls = ">1K calls. This contract is used a lot!"
+  } else if (callsCount < 100) {
     score--
     insights.calls = `[WARNING] There were only ${callsCount} calls to this contract. This contract is not used a lot.`
   } else {
@@ -55,6 +46,7 @@ const analyzeTx = ({
     insights.score += " => RISKY (Check warnings and be cautious)"
   }
 
+  insights.disclaimer = "These information might not be accurate. Please be careful!"
   return insights
 }
 

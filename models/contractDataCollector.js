@@ -1,33 +1,28 @@
-const { getContractData, getContractCalls, getIfItsVerified } = require('../services/eth_requests')
-const ValidationError = require('./ValidationError')
+const { getContractData, getContractCallsCount, getIfItsVerified } = require('../services/eth_requests')
+const logger = require('../utils/logger')
 
 module.exports = class ContractDataCollector {
-  constructor(body) {
-    const needed = ["address"]
-    needed.forEach(property => {
-      if (!body.hasOwnProperty(property))
-        throw new ValidationError(`Invalid contract input for property ${property}`)
-    })
 
-    this.address = body.address
+  constructor(address) {
+    this.address = address
   }
 
   async populateData() {
-    const p1 = getContractData(this.contractAddr).then(data => {
-      this.contractCreator = data.contractCreator
-      this.creationTimestamp = data.created_timestamp
-      this.lastActiveTimestamp = data.last_active_timestamp
-    })
+    const p1 = getIfItsVerified(this.address)
+      .then(data => {
+        this.isAVerifiedContract = data
+      })
 
-    const p2 = getContractCalls(this.contractAddr).then(data => {
-      this.callsCount = data.length
-    })
+    // join this to next call, to have a single call to transpose api
+    const count = await getContractCallsCount(this.address)
+    this.callsCount = count 
 
-    const p3 = getIfItsVerified(this.ContractAddr).then(data => {
-      this.isAVerifiedContract = data
-    })
+    const contractData = await getContractData(this.address)
+    this.contractCreator = contractData.creator_address
+    this.creationTimestamp = contractData.created_timestamp
+    this.lastActiveTimestamp = contractData.last_active_timestamp
 
-    return Promise.all([p1, p2, p3])
+    return p1
   }
 
   toJSON() {

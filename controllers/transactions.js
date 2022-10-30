@@ -6,18 +6,16 @@ const { analyzeTx } = require('../services/analyzer')
 const { simulateTx } = require('../services/simulate')
 
 txRouter.post('/', async (request, response) => {
+  logger.info('\n\nSTARTING...')
   const dataTx = new TxDataCollector(request.body)
 
   await dataTx.populateData()
 
-  // validate transaction
-
   // simulate tx
-  const simulation = await simulateTx(request.body)
+  // const simulation = await simulateTx(request.body)
 
   logger.info("Analyzed tx:")
   logger.info(dataTx.toJSON())
-  logger.info(JSON.stringify(simulation))
 
   response
     .status(200)

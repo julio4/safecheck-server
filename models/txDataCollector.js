@@ -21,12 +21,13 @@ module.exports = class TxDataCollector {
   async populateData() {
     // we assume transaction is to a smart contract
     // fetch data about contract
-     this.contractDataCollector = new ContractDataCollector({
-      address: this.contractAddr
-    })
-    await contractData.populateData()
+    
+    this.contractDataCollector = new ContractDataCollector(this.contractAddr)
 
-    // get more data here
+    await this.contractDataCollector.populateData()
+
+    // get more data here if needed
+    // make simulation
   }
 
   toJSON() {

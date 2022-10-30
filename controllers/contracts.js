@@ -7,6 +7,8 @@ const { addToIPFS } = require('../services/ipfs')
 contractRouter.get('/:hash', async (request, response) => {
   const contractHash = request.params.hash
 
+  // todo => use contract collector
+
   logger.info(`Getting contract info of ${contractHash}`)
   const calls = await getContractCalls(contractHash)
 
