@@ -1,5 +1,7 @@
-const ValidationError = require('./ValidationError')
+const ValidationError = require('./validationError')
 const ContractDataCollector = require('./contractDataCollector')
+
+const { simulateTx } = require('../services/simulate')
 
 module.exports = class TxDataCollector {
   constructor(body) {
@@ -26,8 +28,20 @@ module.exports = class TxDataCollector {
 
     await this.contractDataCollector.populateData()
 
-    // get more data here if needed
-    // make simulation
+    // simulate tx
+    const { status, simulation } = await simulateTx(this.toTx())
+  }
+
+  toTx() {
+    return {
+      from: this.from,
+      to: this.contractAddr,
+      value: this.value,
+      gas: this.gas,
+      maxFeePerGas: this.maxFeePerGas,
+      maxPriorityFeePerGas: this.maxPriorityFeePerGas,
+      data: this.data
+    }
   }
 
   toJSON() {
