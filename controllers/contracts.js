@@ -10,7 +10,7 @@ contractRouter.get('/:hash', async (request, response) => {
   const contractHash = request.params.hash
   const calls = await getContractCalls(contractHash);
   const data = await localBac(contractHash, calls);
-  response.json({bacalhau: localBac});
+  response.json({bacalhau: data});
   return;
 
   const contractInfo = await getContractInfo(contractHash);
