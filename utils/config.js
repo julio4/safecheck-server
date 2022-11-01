@@ -2,10 +2,12 @@
 require('dotenv').config()
 
 const PORT = process.env.PORT
+const MODE = process.env.MODE || "DYNAMIC"
 
 // Transpose
 const TRANSPOSE_API_KEY = process.env.TRANSPOSE_API_KEY
 const TRANSPOSE_API_ENDPOINT = "https://sql.transpose.io"
+const TRANSPOSE_LIMIT = 1000
 
 // Web3 Storage
 const WEB3STORAGE_API_KEY = process.env.WEB3STORAGE_API_KEY

@@ -7,9 +7,7 @@
     "start": "NODE_ENV=production node index.js",
     "dev": "NODE_ENV=development nodemon index.js",
     "deploy": "echo 'not implemented'",
-    "lint": "eslint .",
-    "test": "NODE_ENV=test jest --verbose --runInBand --forceExit",
-    "start:test": "NODE_ENV=test node index.js"
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "Julio, Gwen, Quint, Clement",
@@ -27,9 +25,7 @@
     "eslint": "^8.17.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "jest": "^28.1.1",
-    "nodemon": "^2.0.16",
-    "supertest": "^6.2.3"
+    "nodemon": "^2.0.16"
   },
   "jest": {
     "testEnvironment": "node"

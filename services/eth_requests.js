@@ -1,14 +1,13 @@
 const axios = require('axios')
 const logger = require('../utils/logger')
 
-const { ETHERSCAN_API_KEY, ETHERSCAN_API_ENDPOINT, TRANSPOSE_API_ENDPOINT, TRANSPOSE_API_KEY } = require("../utils/config")
-
-class RequestError extends Error {
-  constructor(message) {
-    super(message)
-    this.name = "RequestError";
-  }
-}
+const {
+  ETHERSCAN_API_KEY,
+  ETHERSCAN_API_ENDPOINT,
+  TRANSPOSE_API_ENDPOINT,
+  TRANSPOSE_API_KEY,
+  TRANSPOSE_LIMIT
+} = require("../utils/config")
 
 const getContractData = async (contractAddr) => {
   let response = undefined 
@@ -33,7 +32,7 @@ const getContractCalls = async (contractAddr) => {
   let response = undefined 
   try {
     response = await axios.post(TRANSPOSE_API_ENDPOINT, {
-      sql: `SELECT timestamp, block_number, from_address, value, __confirmed FROM ethereum.transactions WHERE to_address='${contractAddr}' ORDER BY block_number DESC LIMIT 10000;`
+      sql: `SELECT timestamp, block_number, from_address, value, __confirmed FROM ethereum.transactions WHERE to_address='${contractAddr}' ORDER BY block_number DESC LIMIT ${TRANSPOSE_LIMIT};`
     }, {
       headers: {
         'x-api-key': TRANSPOSE_API_KEY,
@@ -51,7 +50,7 @@ const getContractCallsCount = async (contractAddr) => {
   let response = undefined 
   try {
     response = await axios.post(TRANSPOSE_API_ENDPOINT, {
-      sql: `SELECT timestamp, block_number, from_address, value, __confirmed FROM ethereum.transactions WHERE to_address='${contractAddr}' LIMIT 1000;`
+      sql: `SELECT timestamp, block_number, from_address, value, __confirmed FROM ethereum.transactions WHERE to_address='${contractAddr}' LIMIT ${TRANSPOSE_LIMIT};`
     }, {
       headers: {
         'x-api-key': TRANSPOSE_API_KEY,

@@ -1,4 +1,4 @@
-const ValidationError = require('./validationError')
+const ValidationError = require('../errors/validationError')
 const ContractDataCollector = require('./contractDataCollector')
 
 const { simulateTx } = require('../services/simulate')

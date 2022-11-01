@@ -1,5 +1,6 @@
 const contractRouter = require('express').Router()
 const logger = require('../utils/logger')
+const { MODE } = require('../utils/config')
 
 const ContractDataCollector = require('../models/contractDataCollector')
 const { getContractCalls } = require('../services/eth_requests')
@@ -9,7 +10,7 @@ const { getContractInfo, callBacalhau, localBac } = require('../services/bacalha
 contractRouter.get('/:hash', async (request, response) => {
   let dataTx
   let data
-  if (process.env.MODE === 'static') {
+  if (MODE === 'STATIC') {
     dataTx = require('../json/contractData.json')
     data = require('../json/bccOutput.json')
   }
