@@ -3,29 +3,24 @@ const logger = require('../utils/logger')
 const { MODE } = require('../utils/config')
 
 const ContractDataCollector = require('../models/contractDataCollector')
-const { getContractCalls } = require('../services/eth_requests')
-const { addToIPFS } = require('../services/ipfs')
-const { getContractInfo, callBacalhau, localBac } = require('../services/bacalhau')
 
 contractRouter.get('/:hash', async (request, response) => {
-  let dataTx
-  let data
+  let data;
+
   if (MODE === 'STATIC') {
-    dataTx = require('../json/contractData.json')
-    data = require('../json/bccOutput.json')
+    data = require('../json/bccOutput.json');
   }
+
   else {
-    const contractHash = request.params.hash
-    const calls = await getContractCalls(contractHash);
-    data = await localBac(contractHash, calls);
-    dataTx = new ContractDataCollector(contractHash)
-    await dataTx.populateData()
-    dataTx = dataTx.toJSON()
+    const contractHash = request.params.hash;
+    const dataCollector = new ContractDataCollector(contractHash);
+    await dataCollector.populateData();
+    data = dataCollector.toJSON();
   }
 
   response
     .status(200)
-    .json({ bacalhau: data, dataTx: dataTx })
+    .json(data);
 })
 
 module.exports = contractRouter

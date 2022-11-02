@@ -1,5 +1,6 @@
 const axios = require('axios')
 const logger = require('../utils/logger')
+const RequestError = require('../errors/requestError');
 
 const {
   ETHERSCAN_API_KEY,

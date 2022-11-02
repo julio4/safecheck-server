@@ -3,6 +3,7 @@ require('dotenv').config()
 
 const PORT = process.env.PORT
 const MODE = process.env.MODE || "DYNAMIC"
+const BACALHAU = process.env.BACALHAU || "disabled"
 
 // Transpose
 const TRANSPOSE_API_KEY = process.env.TRANSPOSE_API_KEY
@@ -24,8 +25,11 @@ const TENDERLY_ACCESS_KEY = process.env.TENDERLY_ACCESS_KEY
 
 module.exports = {
   PORT,
+  MODE,
+  BACALHAU,
   TRANSPOSE_API_KEY,
   TRANSPOSE_API_ENDPOINT,
+  TRANSPOSE_LIMIT,
   WEB3STORAGE_API_KEY,
   ETHERSCAN_API_KEY,
   ETHERSCAN_API_ENDPOINT,

@@ -1,44 +1,32 @@
 const fs = require('fs');
 const { spawnSync } = require('node:child_process');
-const { getFromIPFS } = require('./ipfs');
+const { addToIPFS } = require('./ipfs');
+const logger = require('../utils/logger');
 
-const getContractInfo = async (address) => {
-  try {
-    const content = JSON.parse(fs.readFileSync('./computed/contracts.json'));
-    return (content[address] !== undefined) ? content[address] : null;
-  } catch (err) {
-    console.error("Could not read content from computed", err);
-  }
-}
+const bacalhauImage = "quintenbons/safecheckbacalhau:1.0";
 
-const isComputed = async (address) => {
-  try {
-    const content = JSON.parse(fs.readFileSync('../computed/contracts.json'));
-    return content[address] !== undefined;
-  } catch (err) {
-    console.error("Could not read content from computed")
-  }
-}
+const computeWithBacalhau = async (address, content) => {
+  content.reverse()
 
-const callBacalhau = async (address, cid) => {
+  // Push to IPFS
+  logger.info("Sending content on IPFS");
+  const cid = await addToIPFS(content, `${address}.json`);
+
   // Launch bachalau
-  const image = "quintenbons/testlisbon:1.7";
-  console.log(image, cid);
-  const result = spawnSync('bacalhau', ['docker', 'run', '--id-only', image, '--inputs', cid]);
+  logger.info("Running job on baclhau", bacalhauImage, cid);
+  const result = spawnSync('bacalhau', ['docker', 'run', '--id-only', bacalhauImage, '--inputs', cid]);
   let jobId = result.stdout.toString();
   jobId = /^[^\n]*/.exec(jobId)[0];
-  console.log("Bacalhau run done", jobId);
 
-  // Write in cache
+  // Get output locally
+  logger.info("Getting bacalhau output locally", bacalhauImage, cid);
   const result1 = spawnSync('bacalhau', ['get', '--output-dir', './computed', jobId]);
-  console.log("Bacalhau get done");
 
-  let contracts = JSON.parse(fs.readFileSync('./computed/contracts.json'));
-  contracts[address] = {cid, jobId};
-  fs.writeFileSync('./computed/contracts.json', JSON.stringify(contracts));
+  // TODO: Return information... Unless execution went wrong
+  logger.info("DONE", bacalhauImage, cid);
 }
 
-const localBac = async (address, content) => {
+const computeLocally = async (address, content) => {
   let result = { contractAdress: address, addressCallCount: {}, oldestTimeStamp: 0, newestTimeStamp: 0, timePlot: [], transactionOverTime: [], valueOverTime: [] };
 
   content.reverse()
@@ -91,8 +79,6 @@ const localBac = async (address, content) => {
 }
 
 module.exports = {
-  getContractInfo,
-  isComputed,
-  callBacalhau,
-  localBac,
+  computeWithBacalhau,
+  computeLocally,
 };
